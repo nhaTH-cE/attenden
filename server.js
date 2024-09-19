@@ -9,7 +9,8 @@ const app = express();
 const port = 3000;
 
 // Load credentials and spreadsheet ID from environment variables
-const credentials = require(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 
 // Google Sheets API
