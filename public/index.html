@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Web</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .notification {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            display: none;
+        }
+        .notification.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .notification.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Welcome to the Attendance Web Application</h1>
+        <form id="attendanceForm">
+            <label for="studentId">Student ID:</label>
+            <input type="text" id="studentId" name="studentId" required>
+            <br>
+
+            <button type="submit">Submit</button>
+        </form>
+        <div id="responseMessage" class="notification"></div>
+    </div>
+
+    <script>
+        document.getElementById('attendanceForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const studentId = document.getElementById('studentId').value;
+
+            if (!studentId) {
+                showNotification('error', 'Student ID is required.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ studentId })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showNotification('success', result.message); // Thông báo thành công
+                } else {
+                    showNotification('error', result.message); // Thông báo lỗi
+                }
+
+            } catch (error) {
+                showNotification('error', 'An error occurred. Please try again.'); // Thông báo lỗi
+            }
+        });
+
+        function showNotification(type, message) {
+            const notification = document.getElementById('responseMessage');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.display = 'block';
+
+            // Tự động ẩn thông báo sau 5 giây
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
