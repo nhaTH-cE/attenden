@@ -64,11 +64,6 @@ app.post('/submit', async (req, res) => {
             const studentIndex = students.findIndex(row => row[1] === studentId);
 
             if (studentIndex !== -1) {
-                const sheetId = await getSheetIdByName(sheetName);
-                if (!sheetId) {
-                    throw new Error(`Sheet ID for "${sheetName}" not found.`);
-                }
-
                 await sheets.spreadsheets.batchUpdate({
                     spreadsheetId: SPREADSHEET_ID,
                     requestBody: {
@@ -76,7 +71,7 @@ app.post('/submit', async (req, res) => {
                             {
                                 repeatCell: {
                                     range: {
-                                        sheetId: sheetId,
+                                        sheetId: await getSheetIdByName(sheetName),
                                         startRowIndex: studentIndex,
                                         endRowIndex: studentIndex + 1,
                                         startColumnIndex: 0,
@@ -102,35 +97,26 @@ app.post('/submit', async (req, res) => {
             }
         }
 
-        // Nếu không tìm thấy studentId trong cả hai sheet
-        return res.status(404).json({ message: 'Student ID not found in any list.' });
+        return res.status(400).json({ message: 'Student ID not found in any list.' });
     } catch (error) {
         console.error('Error writing to Google Sheets:', error);
         res.status(500).json({ message: 'Error writing to Google Sheets.' });
     }
 });
 
-// Hàm lấy sheet ID dựa trên tên sheet
 async function getSheetIdByName(sheetName) {
-    try {
-        const client = await auth.getClient();
-        const sheets = google.sheets({ version: 'v4', auth: client });
-        const response = await sheets.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
+    const client = await auth.getClient();
+    const sheets = google.sheets({ version: 'v4', auth: client });
+    const response = await sheets.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
 
-        const sheet = response.data.sheets.find(s => s.properties.title === sheetName);
-        if (sheet) {
-            return sheet.properties.sheetId;
-        } else {
-            console.error(`Sheet "${sheetName}" not found.`);
-            return null;
-        }
-    } catch (error) {
-        console.error(`Error fetching sheet ID for "${sheetName}":`, error);
-        throw new Error(`Error fetching sheet ID for "${sheetName}".`);
+    const sheet = response.data.sheets.find(s => s.properties.title === sheetName);
+    if (sheet) {
+        return sheet.properties.sheetId;
+    } else {
+        throw new Error(`Sheet "${sheetName}" not found.`);
     }
 }
 
-// Start the server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
