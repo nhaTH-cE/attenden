@@ -17,11 +17,12 @@ if (!SPREADSHEET_ID) {
     process.exit(1);
 }
 
+const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
 
 const auth = new google.auth.GoogleAuth({
-    keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    credentials,
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-});
+})
 
 const SHEET_NAME_STUDENTS_OLD = 'Trang tính1';
 const SHEET_NAME_STUDENTS_NEW = 'Trang tính2';
