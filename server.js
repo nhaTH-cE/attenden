@@ -2,32 +2,25 @@ const { google } = require('googleapis');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-require('dotenv').config(); // Load environment variables
+require('dotenv').config();
 
-// Initialize Express app
+
 const app = express();
-const port = process.env.PORT || 3000; // Dùng port từ env nếu có
+const port = process.env.PORT || 3000;
 
-// Load credentials and spreadsheet ID from environment variables
-let credentials;
-try {
-    credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
-} catch (error) {
-    console.error('Invalid or missing GOOGLE_CREDENTIALS environment variable');
-    process.exit(1); // Dừng ứng dụng nếu không tìm thấy credentials hợp lệ
-}
+
+
 
 const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 if (!SPREADSHEET_ID) {
     console.error('Missing SPREADSHEET_ID environment variable');
-    process.exit(1); // Dừng ứng dụng nếu không có SPREADSHEET_ID
+    process.exit(1);
 }
 
-// Google Sheets API
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
+
 const auth = new google.auth.GoogleAuth({
-    credentials: credentials,
-    scopes: SCOPES
+    keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
 const SHEET_NAME_STUDENTS_OLD = 'Trang tính1';
@@ -37,7 +30,7 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve the main HTML file
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -93,7 +86,7 @@ app.post('/submit', async (req, res) => {
                     }
                 });
 
-                return res.json({ message: 'Attendance submitted and highlighted successfully!' });
+                return res.json({ message: 'Attendance submitted successfully!' });
             }
         }
 

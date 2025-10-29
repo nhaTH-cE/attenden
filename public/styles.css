@@ -51,31 +51,28 @@ button:hover {
     background-color: #45a049;
 }
 
-/* Phong cách thông báo chung */
 #message {
     font-weight: bold;
     text-align: center;
     margin-top: 20px;
     padding: 15px;
     border-radius: 8px;
-    display: none; /* Ẩn mặc định */
+    display: none;
 }
 
-/* Thông báo thành công */
 #message.success {
     color: #155724;
     background-color: #d4edda;
     border: 1px solid #c3e6cb;
 }
 
-/* Thông báo lỗi */
 #message.error {
     color: #721c24;
     background-color: #f8d7da;
     border: 1px solid #f5c6cb;
 }
 
-/* Hiệu ứng hiển thị thông báo */
+
 #message.show {
     display: block;
     animation: fadeIn 0.5s ease-in-out;
@@ -89,3 +86,23 @@ button:hover {
         opacity: 1;
     }
 }
+
+
+  .notification {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            display: none;
+        }
+        .notification.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .notification.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
